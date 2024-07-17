@@ -49,6 +49,31 @@ export class Lnbits implements INodeType {
             value: 'getTransactions',
             description: 'Retrieve transactions for a wallet',
           },
+          {
+            name: 'Create Invoice',
+            value: 'createInvoice',
+            description: 'Create a new invoice',
+          },
+          {
+            name: 'Pay Invoice',
+            value: 'payInvoice',
+            description: 'Pay an invoice',
+          },
+          {
+            name: 'Manage Payments',
+            value: 'managePayments',
+            description: 'Manage payments',
+          },
+          {
+            name: 'List Extensions',
+            value: 'listExtensions',
+            description: 'List all available extensions',
+          },
+          {
+            name: 'List Users',
+            value: 'listUsers',
+            description: 'List all users',
+          },
         ],
         default: 'getWallets',
         required: true,
@@ -75,6 +100,24 @@ export class Lnbits implements INodeType {
           {
             displayName: 'Wallet ID',
             name: 'walletId',
+            type: 'string',
+            default: '',
+          },
+          {
+            displayName: 'Amount',
+            name: 'amount',
+            type: 'number',
+            default: 0,
+          },
+          {
+            displayName: 'Memo',
+            name: 'memo',
+            type: 'string',
+            default: '',
+          },
+          {
+            displayName: 'Invoice',
+            name: 'invoice',
             type: 'string',
             default: '',
           },
@@ -123,6 +166,59 @@ export class Lnbits implements INodeType {
       responseData = await this.helpers.request({
         method: 'GET',
         url: `${credentials.url}/api/v1/wallet/${walletId}/transactions`,
+        headers: {
+          'X-Api-Key': credentials.adminApiKey,
+        },
+      });
+    } else if (endpoint === 'createInvoice') {
+      const body: IDataObject = {
+        out: false,
+        amount: additionalFields.amount,
+        memo: additionalFields.memo,
+      };
+      responseData = await this.helpers.request({
+        method: 'POST',
+        url: `${credentials.url}/api/v1/payments`,
+        headers: {
+          'X-Api-Key': credentials.adminApiKey,
+        },
+        body,
+        json: true,
+      });
+    } else if (endpoint === 'payInvoice') {
+      const body: IDataObject = {
+        out: true,
+        bolt11: additionalFields.invoice,
+      };
+      responseData = await this.helpers.request({
+        method: 'POST',
+        url: `${credentials.url}/api/v1/payments`,
+        headers: {
+          'X-Api-Key': credentials.adminApiKey,
+        },
+        body,
+        json: true,
+      });
+    } else if (endpoint === 'managePayments') {
+      responseData = await this.helpers.request({
+        method: 'GET',
+        url: `${credentials.url}/api/v1/payments`,
+        headers: {
+          'X-Api-Key': credentials.adminApiKey,
+        },
+      });
+    } else if (endpoint === 'listExtensions') {
+      responseData = await this.helpers.request({
+        method: 'GET',
+        url: `${credentials.url}/api/v1/extensions`,
+        headers: {
+          'X-Api-Key': credentials.adminApiKey,
+        },
+      });
+    } else if (endpoint === 'listUsers') {
+      responseData = await this.helpers.request({
+        method: 'GET',
+        url: `${credentials.url}/api/v1/users`,
         headers: {
           'X-Api-Key': credentials.adminApiKey,
         },
