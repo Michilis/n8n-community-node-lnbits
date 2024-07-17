@@ -1,0 +1,14 @@
+{
+  "name": "Lnbits",
+  "displayName": "LNbits",
+  "description": "Consume LNbits API",
+  "defaults": {
+    "name": "LNbits"
+  },
+  "credentials": [
+    {
+      "name": "lnbitsApi",
+      "required": true
+    }
+  ]
+}
